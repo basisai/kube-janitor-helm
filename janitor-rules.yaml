@@ -1,0 +1,18 @@
+rules:
+- id: clean-up-old-resources
+  resources:
+  - services
+  - ingresses
+  - deployments
+  - jobs
+  - secrets
+  - configmaps
+  - horizontalpodautoscalers
+  - cronjobs
+  jmespath: "metadata.labels.['bdrk.ai/creator'] && (metadata.namespace == 'deployment' || metadata.namespace == 'training')"
+  ttl: 21d
+- id: clean-up-old-helm-releases
+  resources:
+  - configmaps
+  jmespath: "metadata.labels.OWNER == 'TILLER' && (metadata.namespace == 'deployment' || metadata.namespace == 'training')"
+  ttl: 21d

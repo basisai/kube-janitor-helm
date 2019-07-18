@@ -1,3 +1,4 @@
+{{- if not .Values.serviceAccount }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -51,3 +52,4 @@ subjects:
   - kind: ServiceAccount
     name: {{ include "kube-janitor.fullname" . }}
     namespace: {{ .Release.Namespace }}
+{{- end }}

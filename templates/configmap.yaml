@@ -19,5 +19,7 @@ metadata:
   {{- end }}
 data:
   rules.yaml:
+    {{- if .Values.rules }}
     rules:
       {{- toYaml .Values.rules | nindent 6 }}
+    {{- end }}

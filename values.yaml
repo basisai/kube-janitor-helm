@@ -1,0 +1,57 @@
+# Default values for span-deployment.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+# run every 5 minutes
+schedule: "*/5 * * * *"
+
+successfulJobsHistoryLimit: 3
+failedJobsHistoryLimit: 10
+
+janitor:
+  image: hjacobs/kube-janitor:0.7
+  env: []
+  resources:
+    limits:
+      memory: 100Mi
+    requests:
+      cpu: 5m
+      memory: 100Mi
+
+rules:
+  - id: clean-up-old-span-resources
+    resources:
+      - services
+      - ingresses
+      - deployments
+      - jobs
+      - secrets
+      - configmaps
+      - horizontalpodautoscalers
+      - cronjobs
+    jmespath: "metadata.labels.['bdrk.ai/creator'] && (metadata.namespace == 'deployment' || metadata.namespace == 'training')"
+    ttl: 21d
+  - id: clean-up-old-helm-releases
+    resources:
+      - configmaps
+    jmespath: "metadata.labels.OWNER == 'TILLER' && (metadata.namespace == 'deployment' || metadata.namespace == 'training')"
+    ttl: 21d
+
+serviceAccount: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+labels:
+  configMap: {}
+  cronJob: {}
+  pods: {}
+
+annotations:
+  configMap: {}
+  cronJob: {}
+  pods: {}

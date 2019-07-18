@@ -54,12 +54,13 @@ spec:
           serviceAccountName: {{ include "kube-janitor.fullname" . }}
           {{- end }}
           automountServiceAccountToken: true
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
             - name: janitor
               image: {{ .Values.janitor.image }}
               args:
                 - --dry-run
+                - --once
                 - --interval=60
                 - --exclude-namespaces=kube-system,core
                 - --rules-file=/config/rules.yaml

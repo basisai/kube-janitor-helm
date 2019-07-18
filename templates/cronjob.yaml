@@ -59,9 +59,7 @@ spec:
             - name: janitor
               image: {{ .Values.janitor.image }}
               args:
-                - --dry-run
                 - --once
-                - --interval=60
                 - --exclude-namespaces=kube-system,core
                 - --rules-file=/config/rules.yaml
               resources:

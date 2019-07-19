@@ -1,0 +1,93 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "kube-janitor.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "kube-janitor.name" . }}
+    helm.sh/chart: {{ include "kube-janitor.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.labels.cronJob }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- if .Values.annotations.cronJob }}
+  annotations:
+    {{- with .Values.annotations.cronJob }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  schedule: "{{ .Values.schedule }}"
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  suspend: false
+  jobTemplate:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "kube-janitor.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- with .Values.labels.cronJob }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.annotations.cronJob }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ include "kube-janitor.name" . }}
+            app.kubernetes.io/instance: {{ .Release.Name }}
+            {{- with .Values.labels.pods }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          annotations:
+            {{- with .Values.annotations.pods }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          {{- if .Values.serviceAccount }}
+          serviceAccountName: {{ .Values.serviceAccount }}
+          {{- else }}
+          serviceAccountName: {{ include "kube-janitor.fullname" . }}
+          {{- end }}
+          automountServiceAccountToken: true
+          restartPolicy: Never
+          containers:
+            - name: janitor
+              image: {{ .Values.janitor.image }}
+              args:
+                - --once
+                - --exclude-namespaces=kube-system,core
+                - --rules-file=/config/rules.yaml
+              resources:
+                {{- toYaml .Values.janitor.resources | nindent 18 }}
+              securityContext:
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 1000
+              volumeMounts:
+                - name: config-volume
+                  mountPath: /config
+              env:
+                {{- if .Values.janitor.env }}
+                {{- toYaml .Values.janitor.env | nindent 16 }}
+                {{- end }}
+          volumes:
+            - name: config-volume
+              configMap:
+                name: {{ include "kube-janitor.fullname" . }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 14 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 14 }}
+          {{- end }}

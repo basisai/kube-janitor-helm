@@ -1,0 +1,40 @@
+# Default values for span-deployment.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# schedule expressed as a cron expression
+schedule: "30 */6 * * *"
+
+successfulJobsHistoryLimit: 3
+failedJobsHistoryLimit: 10
+
+janitor:
+  image: hjacobs/kube-janitor:0.7
+  env: []
+  resources:
+    limits:
+      memory: 100Mi
+    requests:
+      cpu: 5m
+      memory: 100Mi
+
+# follow config spec in https://github.com/hjacobs/kube-janitor#rules-file
+rules: {}
+
+serviceAccount: ""
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+labels:
+  configMap: {}
+  cronJob: {}
+  pods: {}
+
+annotations:
+  configMap: {}
+  cronJob: {}
+  pods: {}

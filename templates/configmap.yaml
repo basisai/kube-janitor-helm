@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kube-janitor.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "kube-janitor.name" . }}
+    helm.sh/chart: {{ include "kube-janitor.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.labels.configMap }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    namespace: {{ .Release.Namespace }}
+  {{- if .Values.annotations.configMap }}
+  annotations:
+    {{- with .Values.annotations.configMap }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+data:
+  rules.yaml: |
+    {{- if .Values.rules }}
+    {{- toYaml .Values.rules | nindent 4 }}
+    {{- end }}

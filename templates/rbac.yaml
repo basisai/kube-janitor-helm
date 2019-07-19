@@ -1,0 +1,55 @@
+{{- if not .Values.serviceAccount }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "kube-janitor.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "kube-janitor.name" . }}
+    helm.sh/chart: {{ include "kube-janitor.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "kube-janitor.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "kube-janitor.name" . }}
+    helm.sh/chart: {{ include "kube-janitor.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - get
+      - watch
+      - list
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "kube-janitor.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "kube-janitor.name" . }}
+    helm.sh/chart: {{ include "kube-janitor.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "kube-janitor.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "kube-janitor.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

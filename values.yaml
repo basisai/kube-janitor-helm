@@ -2,8 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-
-# run every 5 minutes
+# schedule expressed as a cron expression
 schedule: "30 */6 * * *"
 
 successfulJobsHistoryLimit: 3
@@ -19,6 +18,7 @@ janitor:
       cpu: 5m
       memory: 100Mi
 
+# follow config spec in https://github.com/hjacobs/kube-janitor#rules-file
 rules: {}
 
 serviceAccount: ""

@@ -17,6 +17,8 @@ janitor:
     requests:
       cpu: 5m
       memory: 100Mi
+  # Set to true to run Janitor in Dry-run mode
+  dryRun: false
 
 # follow config spec in https://github.com/hjacobs/kube-janitor#rules-file
 rules: {}

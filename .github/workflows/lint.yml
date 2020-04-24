@@ -9,8 +9,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Fetch history
-        run: git fetch --prune --unshallow
+      - name: Fetch history and check gh-pages branch
+        run: |
+          git fetch --prune --unshallow
+          git ls-remote --exit-code --heads origin gh-pages
 
       - name: Run chart-testing (lint)
         id: lint

@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  kube-janitor:
+  - apiVersion: v1
+    appVersion: 20.4.1
+    created: "2020-04-24T04:11:51.120516469Z"
+    description: Cleans up Kubernetes resources on a configured TTL
+    digest: 55e05bc7c06b09148e2f600b9c3f6ee610fdfa32781979f6f5875b3be4569f53
+    home: https://github.com/basisai/kube-janitor-helm
+    name: kube-janitor
+    sources:
+    - https://github.com/hjacobs/kube-janitor
+    - https://github.com/basisai/kube-janitor-helm
+    urls:
+    - https://github.com/basisai/kube-janitor-helm/releases/download/kube-janitor-1.0.4/kube-janitor-1.0.4.tgz
+    version: 1.0.4
+generated: "2020-04-24T04:11:50.986083706Z"

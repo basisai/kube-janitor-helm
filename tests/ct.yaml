@@ -1,0 +1,5 @@
+validate-maintainers: false
+chart-dirs:
+- /workdir
+charts:
+- kube-janitor

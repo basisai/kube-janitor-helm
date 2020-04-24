@@ -1,0 +1,27 @@
+name: Release Charts
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@8505b7acc8f413fdf6e6d38b4f3b98282eea7833
+        with:
+          # chart-releaser version https://github.com/helm/chart-releaser/releases
+          version: v1.0.0-beta.1
+          charts_dir: .
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

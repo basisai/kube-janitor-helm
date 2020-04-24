@@ -9,7 +9,7 @@ successfulJobsHistoryLimit: 3
 failedJobsHistoryLimit: 10
 
 janitor:
-  image: hjacobs/kube-janitor:0.7
+  image: hjacobs/kube-janitor:20.4.1
   env: []
   resources:
     limits:

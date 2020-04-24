@@ -1,0 +1,22 @@
+name: Lint and Test Charts
+
+on: pull_request
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Fetch history and check gh-pages branch
+        run: |
+          git fetch --prune --unshallow
+          git ls-remote --exit-code --heads origin gh-pages
+
+      - name: Run chart-testing (lint)
+        id: lint
+        uses: helm/chart-testing-action@v1.0.0-rc.2
+        with:
+          config: tests/ct.yaml
+          command: lint
